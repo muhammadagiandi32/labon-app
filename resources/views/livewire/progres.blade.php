@@ -38,7 +38,10 @@
                         <th scope="col">Tanggal Diterima</th>
                         <th scope="col">Tanggal Diambil</th>
                         <th scope="col">Status</th>
+                        @if (auth()->user()->role_id == '3')
+                        @else
                         <th width="10%" scope="col">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -52,35 +55,25 @@
                             <td>{{ \Carbon\Carbon::parse($item->tanggal_diambil)->format('d m Y, H:i') }}</td>
                             <td>
                                 @if ($item->status == 0)
-                                    <span class="badge badge-secondary">Sudah diterima</span>
+                                    <span class="badge badge-secondary">Waiting</span>
                                 @elseif ($item->status == 1)
-                                    <span class="badge badge-dark">Dicuci</span>
+                                    <span class="badge badge-dark">Proses</span>
                                 @elseif ($item->status == 2)
-                                    <span class="badge badge-primary">Dikeringkan</span>
+                                    <span class="badge badge-primary">Menunggu Dibayar</span>
                                 @elseif ($item->status == 3)
-                                    <span class="badge badge-info">Disetrika</span>
-                                @elseif ($item->status == 4)
-                                    <span class="badge badge-warning">Menunggu Dibayar</span>
-                                @elseif ($item->status == 5)
-                                    <span class="badge badge-success">Selesai</span>
+                                    <span class="badge badge-info">Selesai</span>
                                 @endif
                             </td>
                             <td>
                                 @if ($item->status == 0)
                                     <button wire:click="aksi({{ $item->id }})" type="button"
-                                        class="btn btn-sm btn-dark mr-2">Dicuci</button>
+                                        class="btn btn-sm btn-dark mr-2">Proses</button>
                                 @elseif ($item->status == 1)
                                     <button wire:click="aksi({{ $item->id }})" type="button"
-                                        class="btn btn-sm btn-primary mr-2">Dikeringkan</button>
+                                        class="btn btn-sm btn-primary mr-2">Menunggu Dibayar</button>
                                 @elseif ($item->status == 2)
-                                    <button wire:click="aksi({{ $item->id }})" type="button"
-                                        class="btn btn-sm btn-info mr-2">Disetrika</button>
-                                @elseif ($item->status == 3)
-                                    <button wire:click="aksi({{ $item->id }})" type="button"
-                                        class="btn btn-sm btn-warning mr-2">Menunggu Dibayar</button>
-                                @elseif ($item->status == 4)
                                     <button wire:click="pembayaran({{ $item->id }})" type="button"
-                                        class="btn btn-sm btn-success mr-2">Pembayaran</button>
+                                        class="btn btn-sm btn-info mr-2">Pembayaran</button>
                                 @endif
                             </td>
                         </tr>

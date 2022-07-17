@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class AdminMiddleware
+class KonsumenMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,8 +16,8 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->user()->role_id != '1') {
-            return redirect('/progres');
+        if (auth()->user()->role_id != '3') {
+            return redirect()->back();
         }
 
         return $next($request);

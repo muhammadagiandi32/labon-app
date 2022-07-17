@@ -22,6 +22,7 @@
 
     {{-- livewire --}}
     @livewireStyles
+    
 </head>
 <body>
     <div id="app">
@@ -95,6 +96,50 @@
     {{-- livewire --}}
     <script src="//unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    {{-- <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js" integrity="sha256-6XMVI0zB8cRzfZjqKcD01PBsAy3FlDASrlC8SxCpInY=" crossorigin="anonymous"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-S92WPmjAuJaARJin"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#pay-transaksi').on('submit', function(event){
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                event.preventDefault();
+                var form = this;
+                $.ajax({
+                    type:'POST',
+                    url:'/snapToken',
+                    headers: { 'CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    datatType : 'json',
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(form),
+                    success:function(data){
+                        // SnapToken acquired from previous step
+                        console.log(data);
+                        snap.pay(data.snapToken, {
+                            // Optional
+                                onSuccess: function(result){
+                                /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                                },
+                                // Optional
+                                onPending: function(result){
+                                /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                                },
+                                // Optional
+                                onError: function(result){
+                                /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+                            }
+                        });
+                    }
+                })
+            })
+        })
+    </script>
     @livewireScripts
     @livewireChartsScripts
 </body>

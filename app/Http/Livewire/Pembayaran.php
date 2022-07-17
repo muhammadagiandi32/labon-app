@@ -22,11 +22,11 @@ class Pembayaran extends Component
         DB::transaction(function () {
             $transaksi = Transaksi::find(session('transaksi_id'));
             $transaksi->update([
-                'status' => 5
+                'status' => 3
             ]);
 
             Mail::to($transaksi->barang->user->email)->send(new PembayaranMail($transaksi));
-    
+
             session()->forget('transaksi_id');
             session()->flash('sukses', 'Berhasil melakukan pembayaran.');
             return redirect('/progres');

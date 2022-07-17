@@ -51,7 +51,7 @@
 							</a>
 							<!--end::Logo-->
 							<!--begin::Title-->
-							<h1 class="fw-bolder fs-2qx pb-5 pb-md-10" style="color: #986923;">Ambon Laundry</h1>
+							<h1 class="fw-bolder fs-2qx pb-5 pb-md-10" style="color: #986923;">BNC Laundry</h1>
 							<!--end::Title-->
 							<!--begin::Description-->
 							<p class="fw-bold fs-2" style="color: #986923;">Cuci bersih 7 kali
@@ -123,6 +123,8 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
 									@enderror
+									<a href="{{ url('register') }}" class="link-primary fs-6 fw-bolder">register</a>
+
 								</div>
 								<!--end::Input group-->
 								<!--begin::Actions-->

@@ -18,7 +18,7 @@
     <div class="container">
         <div class="row align-items-center text-center">
             <div class="col-md-6">
-                <h1 class="display-4">Ambon Laundry</h1>
+                <h1 class="display-4">BNC Laundry</h1>
                 <p class="mb-5">Pelayanan yang bagus dan murah</p>
                 <a href="{{ url('login')}}" class="btn btn-primary active">Continue</a>
             </div>

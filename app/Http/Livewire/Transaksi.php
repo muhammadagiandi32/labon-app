@@ -9,6 +9,8 @@ use App\Models\Konsumen;
 use App\Models\Layanan;
 use App\Models\Transaksi as ModelsTransaksi;
 use App\Models\User;
+// use App\Http\Livewire\Auth;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -46,37 +48,99 @@ class Transaksi extends Component
         unset($this->barang[$key]);
     }
 
+
     public function store()
     {
-        $this->validate();
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = 'SB-Mid-server-JpF4nsP97oaxhsFzCoagiVUG';
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+        // $this->validate();
 
         DB::transaction(function () {
             $layanan = Layanan::find($this->layanan_nama);
-        
+
             $user = User::create([
                 'name' => $this->nama,
                 'email' => $this->email,
                 'role_id' => 3
             ]);
-    
+
             Konsumen::create([
                 'hp' => $this->hp,
                 'alamat' => $this->alamat,
                 'user_id' => $user->id,
             ]);
-    
+            $params = array(
+                'transaction_details' => array(
+                    'order_id' => rand(),
+                    'gross_amount' => $layanan->harga * $this->berat,
+                )
+            );
+            // $token_id =  csrf_token();
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+
+            // // Populate customer's billing address
+            // $billing_address = array(
+            //     'first_name'   => "Andri",
+            //     'last_name'    => "Setiawan",
+            //     'address'      => "Karet Belakang 15A, Setiabudi.",
+            //     'city'         => "Jakarta",
+            //     'postal_code'  => "51161",
+            //     'phone'        => "081322311801",
+            //     'country_code' => 'IDN'
+            // );
+            // $detail_user = DB::table('konsumen')->join('users', 'konsumen.user_id', '=', 'users.id')->where('konsumen.user_id', Auth::user()->id)->get();
+
+            // // Populate customer's shipping address
+            // $shipping_address = array(
+            //     'first_name'   => $detail_user[0]->name,
+            //     'last_name'    => "",
+            //     'address'      => $detail_user[0]->email,
+            //     'city'         => "",
+            //     'postal_code'  => "",
+            //     'phone'        => $detail_user[0]->hp,
+            //     'country_code' => 'IDN'
+            // );
+            // $detail_user = DB::table('konsumen')->join('users', 'konsumen.user_id', '=', 'users.id')->where('konsumen.user_id', Auth::user()->id)->get();
+
+            // // Populate customer's info
+            // $customer_details = array(
+            //     'first_name'       => $detail_user[0]->name,
+            //     'last_name'        => "",
+            //     'email'            => $detail_user[0]->email,
+            //     'phone'            => $detail_user[0]->hp,
+            //     'billing_address'  => $billing_address,
+            //     'shipping_address' => $shipping_address
+            // );
+
+
             $barang = Barang::create([
                 'berat' => $this->berat,
-                'user_id' => $user->id,
+                'user_id' => Auth::user()->id,
             ]);
-    
+
             foreach ($this->barang as $item) {
                 DetailBarang::create([
                     'barang_id' => $barang->id,
                     'nama' => $item
                 ]);
+                // Populate items
+                $items = [
+                    [
+                        'id'       => $barang->id,
+                        'price'    => $layanan->harga,
+                        'quantity' => 1,
+                        'name'     => $item
+                    ]
+                ];
             }
-    
+
             $transaksi = ModelsTransaksi::create([
                 'layanan_id' => $this->layanan_nama,
                 'barang_id' => $barang->id,
@@ -85,16 +149,21 @@ class Transaksi extends Component
                 'tanggal_diambil' => now()->addHours($layanan->durasi),
                 'status' => 0
             ]);
+            // dd($items);
 
             Mail::to($this->email)->send(new TransaksiMail($transaksi));
 
             session()->flash('sukses', 'Data berhasil ditambahkan.');
-            return redirect('/progres');
+            return redirect('/transaksi', compact('snapToken'));
         });
     }
 
     public function render()
     {
+        // dd(Auth::user()->id);
+        $detail_user = DB::table('konsumen')->join('users', 'konsumen.user_id', '=', 'users.id')->where('konsumen.user_id', Auth::user()->id)->get();
+        // dd($detail_user);
+
         if ($this->layanan_nama && $this->berat) {
             $layanan = Layanan::find($this->layanan_nama);
             $this->total_bayar = $layanan->harga * $this->berat;
@@ -102,6 +171,6 @@ class Transaksi extends Component
             $this->total_bayar = 0;
         }
         $layanan = Layanan::all();
-        return view('livewire.transaksi', compact('layanan'));
+        return view('livewire.transaksi', compact('layanan', 'detail_user'));
     }
 }
