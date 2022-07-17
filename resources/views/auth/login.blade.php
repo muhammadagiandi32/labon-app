@@ -55,7 +55,7 @@
 							<!--end::Title-->
 							<!--begin::Description-->
 							<p class="fw-bold fs-2" style="color: #986923;">Cuci bersih 7 kali
-							<br />dapet 1 kali free</p>
+							<br/>dapet 1 kali free</p>
 							<!--end::Description-->
 						</div>
 						<!--end::Content-->
@@ -79,6 +79,7 @@
 								<div class="text-center mb-10">
 									<!--begin::Title-->
 									<h1 class="text-dark mb-3">BNC Laundry</h1>
+									<h5 class="text-muted">Not a Member yet? <a href="{{ url('register') }}" class="link-primary fs-6 fw-bolder">Sign Up</a></h5>
 									<!--end::Title-->
 									<!--begin::Link-->
 									<!-- <div class="text-gray-400 fw-bold fs-4">New Here? 
@@ -110,7 +111,7 @@
 										<label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
 										<!--end::Label-->
 										<!--begin::Link-->
-										<a href="/metronic8/demo1/../demo1/authentication/layouts/aside/password-reset.html" class="link-primary fs-6 fw-bolder">Forgot Password ?</a>
+										{{-- <a href="/metronic8/demo1/../demo1/authentication/layouts/aside/password-reset.html" class="link-primary fs-6 fw-bolder">Forgot Password ?</a> --}}
 										<!--end::Link-->
 									</div>
 									<!--end::Wrapper-->
@@ -123,8 +124,6 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
 									@enderror
-									<a href="{{ url('register') }}" class="link-primary fs-6 fw-bolder">register</a>
-
 								</div>
 								<!--end::Input group-->
 								<!--begin::Actions-->
